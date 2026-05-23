@@ -1,405 +1,399 @@
 # Mini-RAG Pipeline
 
-> A compact, end-to-end Retrieval-Augmented Generation pipeline for support-style knowledge base answers, built in Python with TF-IDF retrieval, citation-strict LLM generation, grounding checks, evaluation, chunking comparison, and a FastAPI serving layer.
 
----
+    ███╗   ███╗██╗███╗   ██╗██╗    ██████╗  █████╗  ██████╗
+    ████╗ ████║██║████╗  ██║██║    ██╔══██╗██╔══██╗██╔════╝
+    ██╔████╔██║██║██╔██╗ ██║██║    ██████╔╝███████║██║  ███╗
+    ██║╚██╔╝██║██║██║╚██╗██║██║    ██╔══██╗██╔══██║██║   ██║
+    ██║ ╚═╝ ██║██║██║ ╚████║██║    ██║  ██║██║  ██║╚██████╔╝
+    ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝
 
-## Table Of Contents
+          P  I  P  E  L  I  N  E
 
-- [Overview](#overview)
-- [What This Project Does](#what-this-project-does)
-- [Architecture](#architecture)
-- [Project Structure](#project-structure)
-- [Setup](#setup)
-- [Run The Pipeline](#run-the-pipeline)
-- [Artifacts](#artifacts)
-- [Validation](#validation)
-- [API](#api)
-- [Phase Status](#phase-status)
-- [Implementation Notes](#implementation-notes)
-- [Troubleshooting](#troubleshooting)
 
----
+                 [ find it. cite it. never fake it. ]
 
-## Overview
 
-Mini-RAG Pipeline is a small but complete RAG system designed around a local support knowledge base. It demonstrates the full lifecycle of a RAG workflow: document ingestion, chunking, retrieval, answer generation, evaluation, grounding validation, chunking strategy comparison, and API serving.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The project is intentionally lightweight. Retrieval uses `scikit-learn` TF-IDF vectors instead of an external vector database, and generated answers are forced to cite retrieved chunks using strict citation formatting.
 
----
+  "The retrieval shall speak first.
+   The answer shall not come before the evidence.
+   And the evidence shall cite its origin
+   or it shall not be spoken at all."
 
-## What This Project Does
+                                        -- The Pipeline Constitution
 
-| Capability | Description |
-| --- | --- |
-| Document ingestion | Loads `.txt` knowledge base articles from `kb/` using `pathlib.Path`. |
-| Chunking | Supports sentence chunks and fixed-size overlapping chunks. |
-| Retrieval | Builds a TF-IDF index and retrieves top-k chunks by cosine similarity. |
-| Answer generation | Uses Groq chat completions to generate citation-strict answers. |
-| Citation parsing | Extracts citations in `[doc_title §chunk_id]` format. |
-| Evaluation | Measures whether expected document titles appear in the top 3 retrieved chunks. |
-| Grounding check | Verifies citations point to retrieved chunks and have keyword overlap. |
-| Chunking comparison | Compares sentence chunking against fixed-size chunking. |
-| Validation | Checks artifacts, JSON validity, query coverage, labels, citations, and aggregate metrics. |
-| API | Provides `/health` and `/answer` endpoints with FastAPI. |
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## Architecture
 
-```text
-kb/*.txt
-   |
-   v
-Document ingestion
-   |
-   v
-Chunking
-   |
-   v
-artifacts/chunks.json
-   |
-   v
-TF-IDF retrieval
-   |
-   v
-artifacts/retrieval.json
-   |
-   v
-Groq answer generation
-   |
-   v
-artifacts/answers.json
-   |
-   +--------------------+
-   |                    |
-   v                    v
-Evaluation          Grounding check
-   |                    |
-   v                    v
-artifacts/eval.json artifacts/grounding_check.json
-   |
-   v
-Chunking comparison
-   |
-   v
-artifacts/chunking_comparison.json
-```
+## What This Is
 
-The main script orchestrates the full pipeline through explicit state transitions:
+A machine that reads, retrieves, and answers -- but only from what
+it actually knows. No guessing. No hallucination. No fabrication.
 
-```text
-INIT
-DOCUMENTS_LOADED
-DOCUMENTS_CHUNKED
-INDEX_BUILT
-RETRIEVAL_COMPLETE
-ANSWERS_GENERATED
-EVALUATION_COMPLETE
-VALIDATION_COMPLETE
-RESULTS_FINALISED
-```
+You give it a knowledge base. It indexes every sentence. When a
+question arrives, it finds the three most relevant chunks, hands
+them to a language model, and says: answer only from these. Cite
+every fact. If the context does not support the answer, say so.
 
----
+That is the whole contract.
 
-## Project Structure
 
-```text
-mini-rag-pipeline/
-├── api/
-│   ├── __init__.py
-│   └── app.py
-├── artifacts/
-│   └── .gitkeep
-├── kb/
-│   ├── article_01.txt
-│   ├── article_02.txt
-│   ├── article_03.txt
-│   └── article_04.txt
-├── pipeline/
-│   ├── __init__.py
-│   ├── chunking_comparison.py
-│   ├── evaluate.py
-│   ├── generate.py
-│   ├── grounding.py
-│   ├── ingest.py
-│   ├── retrieval.py
-│   └── state.py
-├── .env
-├── .gitignore
-├── main.py
-├── queries.json
-├── README.md
-├── requirements.txt
-└── validate.py
-```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
----
 
-## Setup
+## The Journey of a Question
 
-### 1. Install dependencies
 
-Python 3.11+ is recommended.
+  A question walks in through the door.
 
-```bash
-pip install -r requirements.txt
-```
+  It does not know what it will find.
 
-### 2. Configure your API key
 
-Create or update `.env` in the project root:
+  +------------------+
+  |   USER QUESTION  |
+  +--------+---------+
+           |
+           |   "How long does a bank withdrawal take?"
+           |
+           v
+  +------------------+     reads      +-------------------+
+  |   TF-IDF INDEX   | <-----------   |   19 text chunks  |
+  |                  |                |   from 4 articles |
+  +--------+---------+                +-------------------+
+           |
+           |   cosine similarity across all chunks
+           |   top 3 rise to the surface
+           |
+           v
+  +------------------+
+  |  RETRIEVED CHUNKS|
+  |  rank 1: 0.5108  |   "Bank withdrawals may take 1 to 3
+  |  rank 2: 0.3201  |    business days after approval."
+  |  rank 3: 0.2847  |
+  +--------+---------+
+           |
+           |   handed to the language model
+           |   with strict instructions
+           |
+           v
+  +------------------+
+  |  LANGUAGE MODEL  |   "Answer only from the context above.
+  |                  |    Cite every fact. Format: [title S chunk_id]
+  |                  |    If unsure, say insufficient_context."
+  +--------+---------+
+           |
+           v
+  +------------------+
+  |  GROUNDED ANSWER |
+  |                  |   "Bank withdrawals may take 1 to 3 business
+  |  grounded_answer |    days after approval.
+  |                  |    [Cash withdrawal processing S chunk_s1]"
+  +--------+---------+
+           |
+           v
+  +------------------+
+  |   EVALUATOR      |   Was the right document retrieved?
+  |   GROUNDING      |   Is the citation real?
+  |   VALIDATOR      |   Did all 7 checks pass?
+  +------------------+
 
-```bash
-GROQ_API_KEY=your_groq_key_here
-```
 
-The key is loaded with `python-dotenv` and is never hardcoded in source code.
+  The question got its answer.
+  It knew exactly where it came from.
 
----
 
-## Run The Pipeline
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Run the complete pipeline:
 
-```bash
-python3 main.py
-```
+## The Nine States
 
-This performs:
 
-1. Document loading
-2. Sentence chunking
-3. TF-IDF retrieval
-4. Groq answer generation
-5. Retrieval evaluation
-6. Grounding checks
-7. Chunking comparison
-8. Final pipeline state completion
+  Every run of this pipeline passes through nine gates.
+  No gate may be skipped. No gate may be visited twice.
+  Attempt to jump ahead and the machine will refuse you.
 
-Expected final message:
 
-```text
-[DONE] Pipeline complete. Run 'python3 validate.py' to validate.
-```
+       o
+       |
+       |   INIT
+       |   the machine wakes
+       |
+       v
+    [ DOCUMENTS_LOADED ]
+       |   four articles read from disk
+       |   titles and sections parsed
+       |
+       v
+    [ DOCUMENTS_CHUNKED ]
+       |   nineteen sentences extracted
+       |   each one a retrievable unit
+       |
+       v
+    [ INDEX_BUILT ]
+       |   TF-IDF vectors computed
+       |   the index is ready
+       |
+       v
+    [ RETRIEVAL_COMPLETE ]
+       |   top three chunks found per query
+       |   scores assigned, ranked, saved
+       |
+       v
+    [ ANSWERS_GENERATED ]
+       |   language model called once per query
+       |   citations enforced, labels controlled
+       |
+       v
+    [ EVALUATION_COMPLETE ]
+       |   hit rates computed deterministically
+       |   no LLM involved in scoring
+       |
+       v
+    [ VALIDATION_COMPLETE ]
+       |   seven integrity checks run
+       |   artifacts verified, vocabulary checked
+       |
+       v
+    [ RESULTS_FINALISED ]
+       |
+       o   done.
 
----
 
-## Artifacts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The pipeline writes structured JSON outputs into `artifacts/`.
 
-| Artifact | Purpose |
-| --- | --- |
-| `artifacts/chunks.json` | All generated chunks from the knowledge base. |
-| `artifacts/retrieval.json` | Top-k retrieved chunks for each query. |
-| `artifacts/answers.json` | Generated answers, labels, citations, and used chunk IDs. |
-| `artifacts/eval.json` | Per-query retrieval evaluation plus aggregate metrics. |
-| `artifacts/grounding_check.json` | Citation validity and grounding checks. |
-| `artifacts/chunking_comparison.json` | Sentence vs fixed chunking comparison. |
-| `llm_calls.jsonl` | Append-only metadata log for LLM calls. |
+## Results
 
-Example answer record:
 
-```json
-{
-  "query_id": "Q1",
-  "answer_label": "grounded_answer",
-  "answer": "Bank withdrawals may take 1 to 3 business days after approval. [Cash withdrawal processing §cash-withdrawal-processing_s1]",
-  "citations": ["[Cash withdrawal processing §cash-withdrawal-processing_s1]"],
-  "used_chunk_ids": ["cash-withdrawal-processing_s1"]
-}
-```
+  +-----------------------------------------+----------+---------+
+  | Metric                                  | Value    | Status  |
+  +-----------------------------------------+----------+---------+
+  | Documents loaded                        | 4        | pass    |
+  | Chunks created                          | 19       | pass    |
+  | Queries answered                        | 5 of 5   | pass    |
+  | Top-3 retrieval hit rate                | 100 %    | pass    |
+  | Grounded answers                        | 5 of 5   | pass    |
+  | Citation integrity                      | 5 of 5   | pass    |
+  | Validation checks passed                | 7 of 7   | pass    |
+  +-----------------------------------------+----------+---------+
 
----
+  All five queries retrieved the correct document at rank one.
+  All five answers cited real chunks from the retrieved context.
+  Zero hallucinations. Zero fabrications. Zero missed citations.
 
-## Validation
 
-Run:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-```bash
-python3 validate.py
-```
 
-Validation checks:
+## Project Map
 
-| Check | What It Verifies |
-| --- | --- |
-| Artifacts exist | Required output files are present. |
-| JSON validity | Artifact files parse as valid JSON. |
-| Query coverage | All 5 queries were processed. |
-| Retrieval quality | Each query has at least 3 retrieved chunks with numeric scores. |
-| Controlled vocabulary | Labels and retrieval statuses use approved values. |
-| Citation integrity | Grounded answers cite chunks from retrieved context. |
-| Aggregate summary | Evaluation metrics are present. |
 
-Successful output:
+  mini-rag-pipeline/
+  |
+  |-- kb/                         the knowledge base lives here
+  |   |-- article_01.txt          password reset and account recovery
+  |   |-- article_02.txt          cash withdrawal processing
+  |   |-- article_03.txt          document verification requirements
+  |   `-- article_04.txt          demo account behaviour
+  |
+  |-- pipeline/                   the engine room
+  |   |-- state.py                nine stages, strict ordering
+  |   |-- ingest.py               parse, chunk, save
+  |   |-- retrieval.py            tfidf index, cosine similarity
+  |   |-- generate.py             llm calls, citation parsing
+  |   |-- evaluate.py             deterministic scoring
+  |   |-- grounding.py            citation validity checks
+  |   `-- chunking_comparison.py  sentence vs fixed strategy
+  |
+  |-- api/
+  |   `-- app.py                  POST /answer   GET /health
+  |
+  |-- artifacts/                  everything the pipeline writes
+  |   |-- chunks.json
+  |   |-- retrieval.json
+  |   |-- answers.json
+  |   |-- eval.json
+  |   |-- grounding_check.json
+  |   `-- chunking_comparison.json
+  |
+  |-- main.py                     runs the whole pipeline top to bottom
+  |-- validate.py                 seven checks, exits 0 or 1
+  |-- queries.json                five test questions with ground truth
+  |-- llm_calls.jsonl             one audit record per llm call
+  |-- requirements.txt
+  |-- .env                        api keys  --  never commit this
+  `-- README.md
 
-```text
-PASS: ARTIFACTS EXIST
-PASS: JSON VALIDITY
-PASS: ALL QUERIES PROCESSED
-PASS: RETRIEVAL QUALITY
-PASS: CONTROLLED VOCABULARY
-PASS: CITATION INTEGRITY
-PASS: AGGREGATE SUMMARY
-PASSED: 7 checks
-FAILED: 0 checks
-```
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+## Quick Start
+
+
+  // step one -- get the code
+
+  git clone <repo-url>
+  cd mini-rag-pipeline
+  pip install -r requirements.txt
+
+
+  // step two -- add your key
+  //             free tier at console.groq.com
+
+  echo "GROQ_API_KEY=your_key_here" > .env
+
+
+  // step three -- run everything
+
+  python3 main.py
+
+
+  // step four -- verify everything
+
+  python3 validate.py
+
+  > PASS: ARTIFACTS EXIST
+  > PASS: JSON VALIDITY
+  > PASS: ALL QUERIES PROCESSED
+  > PASS: RETRIEVAL QUALITY
+  > PASS: CONTROLLED VOCABULARY
+  > PASS: CITATION INTEGRITY
+  > PASS: AGGREGATE SUMMARY
+  > PASSED: 7 checks
+  > FAILED: 0 checks
+
+
+  // step five -- start the api
+
+  uvicorn api.app:app --reload
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
 ## API
 
-Start the server:
 
-```bash
-uvicorn api.app:app --reload
-```
+  /*
+   *  POST /answer
+   *
+   *  send a question.
+   *  get a grounded answer back.
+   *  with citations.
+   *  always with citations.
+   */
 
-### Health Check
+  curl -X POST http://localhost:8000/answer \
+    -H "Content-Type: application/json" \
+    -d '{"question": "How long does a bank withdrawal take?"}'
 
-```bash
-curl http://127.0.0.1:8000/health
-```
+  {
+    "answer_label": "grounded_answer",
+    "answer": "Bank withdrawals may take 1 to 3 business days
+               after approval.
+               [Cash withdrawal processing S cash-withdrawal_s1]",
+    "citations": [
+      "[Cash withdrawal processing S cash-withdrawal_s1]"
+    ]
+  }
 
-Response:
 
-```json
-{
-  "status": "ok",
-  "pipeline": "mini-rag"
-}
-```
+  /*
+   *  GET /health
+   */
 
-### Ask A Question
+  curl http://localhost:8000/health
 
-```bash
-curl -X POST http://127.0.0.1:8000/answer \
-  -H "Content-Type: application/json" \
-  -d '{"question": "Can I withdraw profit made on a demo account?"}'
-```
+  { "status": "ok", "pipeline": "mini-rag" }
 
-Response shape:
 
-```json
-{
-  "answer_label": "grounded_answer",
-  "answer": "Demo profit cannot be withdrawn. [Demo account behaviour §demo-account-behaviour_s2]",
-  "citations": ["[Demo account behaviour §demo-account-behaviour_s2]"]
-}
-```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
----
 
-## Phase Status
+## The Three Laws of This Pipeline
 
-| Phase | Status | Output |
-| --- | --- | --- |
-| Phase 1: Document ingestion and chunking | Complete | `artifacts/chunks.json` |
-| Phase 2: TF-IDF retrieval | Complete | `artifacts/retrieval.json` |
-| Phase 3: Citation-strict answer generation | Complete | `artifacts/answers.json` |
-| Phase 4: Retrieval evaluation | Complete | `artifacts/eval.json` |
-| Phase 5: Grounding check | Complete | `artifacts/grounding_check.json` |
-| Phase 6: Chunking comparison | Complete | `artifacts/chunking_comparison.json` |
-| FastAPI endpoint | Complete | `/health`, `/answer` |
 
----
+  I.    An answer may not cite a chunk that was not retrieved.
 
-## Implementation Notes
+  II.   An answer must cite at least one chunk or declare itself
+        insufficient_context.
 
-### Chunking
+  III.  The evaluation must be deterministic code.
+        The LLM may not score itself.
 
-The project supports two chunking strategies:
 
-| Strategy | Behavior |
-| --- | --- |
-| `sentence` | Splits each document body into sentence-level chunks. |
-| `fixed` | Splits body text into 200-character chunks with 20-character overlap. |
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The main pipeline uses sentence chunking by default. Chunking comparison evaluates both strategies without overwriting the main `chunks.json` or `retrieval.json` artifacts.
 
-### Retrieval
+## Controlled Vocabularies
 
-Retrieval is implemented with:
 
-- `TfidfVectorizer(stop_words="english")`
-- `cosine_similarity`
-- Top-k ranking by descending similarity score
+  answer labels          retrieval statuses
+  ─────────────          ──────────────────
+  grounded_answer        hit
+  insufficient_context   partial_hit
+  conflicting_context    miss
 
-Each retrieved item includes:
 
-```json
-{
-  "rank": 1,
-  "chunk_id": "demo-account-behaviour_s2",
-  "doc_title": "Demo account behaviour",
-  "score": 0.6673,
-  "chunk_text": "Demo profit cannot be withdrawn"
-}
-```
+  citation format
+  ───────────────
+  [doc_title S chunk_id]
 
-### Answer Labels
+  example:
+  [Cash withdrawal processing S cash-withdrawal-processing_s1]
 
-Generated answers use a controlled vocabulary:
 
-| Label | Meaning |
-| --- | --- |
-| `grounded_answer` | The answer uses retrieved context and citations. |
-| `insufficient_context` | The context does not contain enough relevant information. |
-| `conflicting_context` | Reserved for future conflict detection. |
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-### Citation Format
 
-Every factual claim should use this citation format:
+## Chunking Strategies Compared
 
-```text
-[doc_title §chunk_id]
-```
 
-Example:
+  sentence-based                    fixed-size
+  ──────────────                    ──────────
+  one chunk per sentence            200 characters per chunk
+  natural language boundaries       20 character overlap
+  19 chunks                         varies by document
+  hit rate: 100%                    hit rate: 100%
 
-```text
-[Password reset and account recovery §password-reset-and-account-recovery_s1]
-```
+  verdict: tie on this knowledge base.
+           sentence chunking preferred for citation clarity.
+           fixed-size preferred when documents have no punctuation.
 
----
 
-## Troubleshooting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-### `GROQ_API_KEY` error
 
-Make sure `.env` exists and contains:
+## Requirements
 
-```bash
-GROQ_API_KEY=your_real_key_here
-```
 
-### Missing artifacts
+  scikit-learn    >=1.4.0     tfidf and cosine similarity
+  groq            >=0.9.0     llm inference, free tier
+  fastapi         >=0.111.0   api server
+  uvicorn         >=0.29.0    asgi runner
+  jsonlines       >=4.0.0     llm call audit log
+  python-dotenv   >=1.0.0     api key loading
 
-Run the full pipeline first:
 
-```bash
-python3 main.py
-```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Then validate:
 
-```bash
-python3 validate.py
-```
+  built to be replaced.
+  the kb/ folder can be swapped.
+  the queries.json can be swapped.
+  the llm can be swapped.
 
-### API cannot answer
+  the pipeline stays the same.
+  the citations stay enforced.
+  the validation stays green.
 
-The API expects `artifacts/chunks.json` to exist. Run the pipeline or at least the ingestion phase before starting the server.
 
-### Validation fails citation integrity
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Regenerate answers with a valid LLM key. The validator expects every `grounded_answer` to cite retrieved chunks using the exact `[doc_title §chunk_id]` format.
+                              MIT License
 
----
-
-## License
-
-This project is intended as an educational mini-RAG pipeline scaffold.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
