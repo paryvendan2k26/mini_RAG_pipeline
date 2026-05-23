@@ -46,63 +46,44 @@ That is the whole contract.
 
 ## The Journey of a Question
 
+A question walks in through the door.
+It does not know what it will find.
 
-  A question walks in through the door.
-
-  It does not know what it will find.
-
-
-  +------------------+
-  |   USER QUESTION  |
-  +--------+---------+
-           |
-           |   "How long does a bank withdrawal take?"
+  USER QUESTION
+      "How long does a bank withdrawal take?"
            |
            v
-  +------------------+     reads      +-------------------+
-  |   TF-IDF INDEX   | <-----------   |   19 text chunks  |
-  |                  |                |   from 4 articles |
-  +--------+---------+                +-------------------+
+  TF-IDF INDEX  <---  19 text chunks from 4 articles
            |
            |   cosine similarity across all chunks
            |   top 3 rise to the surface
            |
            v
-  +------------------+
-  |  RETRIEVED CHUNKS|
-  |  rank 1: 0.5108  |   "Bank withdrawals may take 1 to 3
-  |  rank 2: 0.3201  |    business days after approval."
-  |  rank 3: 0.2847  |
-  +--------+---------+
+  RETRIEVED CHUNKS
+      rank 1: 0.5108   "Bank withdrawals may take 1 to 3 business days."
+      rank 2: 0.3201
+      rank 3: 0.2847
            |
-           |   handed to the language model
-           |   with strict instructions
+           |   handed to the language model with strict instructions
            |
            v
-  +------------------+
-  |  LANGUAGE MODEL  |   "Answer only from the context above.
-  |                  |    Cite every fact. Format: [title S chunk_id]
-  |                  |    If unsure, say insufficient_context."
-  +--------+---------+
+  LANGUAGE MODEL
+      "Answer only from the context above.
+       Cite every fact. Format: [title §chunk_id]
+       If unsure, say insufficient_context."
            |
            v
-  +------------------+
-  |  GROUNDED ANSWER |
-  |                  |   "Bank withdrawals may take 1 to 3 business
-  |  grounded_answer |    days after approval.
-  |                  |    [Cash withdrawal processing S chunk_s1]"
-  +--------+---------+
+  GROUNDED ANSWER
+      "Bank withdrawals may take 1 to 3 business days after approval.
+       [Cash withdrawal processing §cash-withdrawal-processing_s1]"
            |
            v
-  +------------------+
-  |   EVALUATOR      |   Was the right document retrieved?
-  |   GROUNDING      |   Is the citation real?
-  |   VALIDATOR      |   Did all 7 checks pass?
-  +------------------+
+  EVALUATOR  --  was the right document retrieved?
+  GROUNDING  --  is the citation real?
+  VALIDATOR  --  did all 7 checks pass?
 
-
-  The question got its answer.
-  It knew exactly where it came from.
+The question got its answer.
+It knew exactly where it came from.
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -110,54 +91,44 @@ That is the whole contract.
 
 ## The Nine States
 
-
   Every run of this pipeline passes through nine gates.
   No gate may be skipped. No gate may be visited twice.
   Attempt to jump ahead and the machine will refuse you.
-
 
        o
        |
        |   INIT
        |   the machine wakes
-       |
        v
-    [ DOCUMENTS_LOADED ]
+    DOCUMENTS_LOADED
        |   four articles read from disk
        |   titles and sections parsed
-       |
        v
-    [ DOCUMENTS_CHUNKED ]
+    DOCUMENTS_CHUNKED
        |   nineteen sentences extracted
        |   each one a retrievable unit
-       |
        v
-    [ INDEX_BUILT ]
+    INDEX_BUILT
        |   TF-IDF vectors computed
        |   the index is ready
-       |
        v
-    [ RETRIEVAL_COMPLETE ]
+    RETRIEVAL_COMPLETE
        |   top three chunks found per query
        |   scores assigned, ranked, saved
-       |
        v
-    [ ANSWERS_GENERATED ]
+    ANSWERS_GENERATED
        |   language model called once per query
        |   citations enforced, labels controlled
-       |
        v
-    [ EVALUATION_COMPLETE ]
+    EVALUATION_COMPLETE
        |   hit rates computed deterministically
        |   no LLM involved in scoring
-       |
        v
-    [ VALIDATION_COMPLETE ]
+    VALIDATION_COMPLETE
        |   seven integrity checks run
        |   artifacts verified, vocabulary checked
-       |
        v
-    [ RESULTS_FINALISED ]
+    RESULTS_FINALISED
        |
        o   done.
 
@@ -167,18 +138,13 @@ That is the whole contract.
 
 ## Results
 
-
-  +-----------------------------------------+----------+---------+
-  | Metric                                  | Value    | Status  |
-  +-----------------------------------------+----------+---------+
-  | Documents loaded                        | 4        | pass    |
-  | Chunks created                          | 19       | pass    |
-  | Queries answered                        | 5 of 5   | pass    |
-  | Top-3 retrieval hit rate                | 100 %    | pass    |
-  | Grounded answers                        | 5 of 5   | pass    |
-  | Citation integrity                      | 5 of 5   | pass    |
-  | Validation checks passed                | 7 of 7   | pass    |
-  +-----------------------------------------+----------+---------+
+  Documents loaded          4          pass
+  Chunks created            19         pass
+  Queries answered          5 of 5     pass
+  Top-3 retrieval hit rate  100%       pass
+  Grounded answers          5 of 5     pass
+  Citation integrity        5 of 5     pass
+  Validation checks passed  7 of 7     pass
 
   All five queries retrieved the correct document at rank one.
   All five answers cited real chunks from the retrieved context.
@@ -189,7 +155,6 @@ That is the whole contract.
 
 
 ## Project Map
-
 
   mini-rag-pipeline/
   |
@@ -232,7 +197,6 @@ That is the whole contract.
 
 
 ## Quick Start
-
 
   // step one -- get the code
 
@@ -277,7 +241,6 @@ That is the whole contract.
 
 ## API
 
-
   /*
    *  POST /answer
    *
@@ -293,12 +256,9 @@ That is the whole contract.
 
   {
     "answer_label": "grounded_answer",
-    "answer": "Bank withdrawals may take 1 to 3 business days
-               after approval.
-               [Cash withdrawal processing S cash-withdrawal_s1]",
-    "citations": [
-      "[Cash withdrawal processing S cash-withdrawal_s1]"
-    ]
+    "answer": "Bank withdrawals may take 1 to 3 business days after approval.
+               [Cash withdrawal processing §cash-withdrawal_s1]",
+    "citations": ["[Cash withdrawal processing §cash-withdrawal_s1]"]
   }
 
 
@@ -316,7 +276,6 @@ That is the whole contract.
 
 ## The Three Laws of This Pipeline
 
-
   I.    An answer may not cite a chunk that was not retrieved.
 
   II.   An answer must cite at least one chunk or declare itself
@@ -331,27 +290,24 @@ That is the whole contract.
 
 ## Controlled Vocabularies
 
-
   answer labels          retrieval statuses
   ─────────────          ──────────────────
   grounded_answer        hit
   insufficient_context   partial_hit
   conflicting_context    miss
 
-
   citation format
   ───────────────
-  [doc_title S chunk_id]
+  [doc_title §chunk_id]
 
   example:
-  [Cash withdrawal processing S cash-withdrawal-processing_s1]
+  [Cash withdrawal processing §cash-withdrawal-processing_s1]
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ## Chunking Strategies Compared
-
 
   sentence-based                    fixed-size
   ──────────────                    ──────────
@@ -369,7 +325,6 @@ That is the whole contract.
 
 
 ## Requirements
-
 
   scikit-learn    >=1.4.0     tfidf and cosine similarity
   groq            >=0.9.0     llm inference, free tier
