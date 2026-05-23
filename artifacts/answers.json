@@ -1,0 +1,57 @@
+[
+  {
+    "query_id": "Q1",
+    "answer_label": "grounded_answer",
+    "answer": "It may take 1 to 3 business days after approval for the bank withdrawal. [Cash withdrawal processing \u00a7cash-withdrawal-processing_s1]",
+    "citations": [
+      "[Cash withdrawal processing \u00a7cash-withdrawal-processing_s1]"
+    ],
+    "used_chunk_ids": [
+      "cash-withdrawal-processing_s1"
+    ]
+  },
+  {
+    "query_id": "Q2",
+    "answer_label": "grounded_answer",
+    "answer": "Reset links expire after 30 minutes, so unfortunately, it's expected that your link would no longer work after an hour. [Password reset and account recovery \u00a7password-reset-and-account-recovery_s1]",
+    "citations": [
+      "[Password reset and account recovery \u00a7password-reset-and-account-recovery_s1]"
+    ],
+    "used_chunk_ids": [
+      "password-reset-and-account-recovery_s1"
+    ]
+  },
+  {
+    "query_id": "Q3",
+    "answer_label": "grounded_answer",
+    "answer": "Support agents cannot see or manually reveal user passwords. [Password reset and account recovery \u00a7password-reset-and-account-recovery_s2]",
+    "citations": [
+      "[Password reset and account recovery \u00a7password-reset-and-account-recovery_s2]"
+    ],
+    "used_chunk_ids": [
+      "password-reset-and-account-recovery_s2"
+    ]
+  },
+  {
+    "query_id": "Q4",
+    "answer_label": "grounded_answer",
+    "answer": "No, a utility bill from 8 months ago will not work for proof of address. [Document verification requirements \u00a7document-verification-requirements_s2]",
+    "citations": [
+      "[Document verification requirements \u00a7document-verification-requirements_s2]"
+    ],
+    "used_chunk_ids": [
+      "document-verification-requirements_s2"
+    ]
+  },
+  {
+    "query_id": "Q5",
+    "answer_label": "grounded_answer",
+    "answer": "No, you cannot withdraw profit made on a demo account. [Demo account behaviour \u00a7demo-account-behaviour_s2]",
+    "citations": [
+      "[Demo account behaviour \u00a7demo-account-behaviour_s2]"
+    ],
+    "used_chunk_ids": [
+      "demo-account-behaviour_s2"
+    ]
+  }
+]

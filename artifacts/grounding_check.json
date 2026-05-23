@@ -1,0 +1,77 @@
+[
+  {
+    "query_id": "Q1",
+    "answer_label": "grounded_answer",
+    "overall_grounded": true,
+    "citation_checks": [
+      {
+        "citation": "[Cash withdrawal processing \u00a7cash-withdrawal-processing_s1]",
+        "chunk_id": "cash-withdrawal-processing_s1",
+        "citation_valid": true,
+        "chunk_found_in_retrieval": true,
+        "keyword_overlap_count": 7,
+        "supported": true
+      }
+    ]
+  },
+  {
+    "query_id": "Q2",
+    "answer_label": "grounded_answer",
+    "overall_grounded": true,
+    "citation_checks": [
+      {
+        "citation": "[Password reset and account recovery \u00a7password-reset-and-account-recovery_s1]",
+        "chunk_id": "password-reset-and-account-recovery_s1",
+        "citation_valid": true,
+        "chunk_found_in_retrieval": true,
+        "keyword_overlap_count": 5,
+        "supported": true
+      }
+    ]
+  },
+  {
+    "query_id": "Q3",
+    "answer_label": "grounded_answer",
+    "overall_grounded": true,
+    "citation_checks": [
+      {
+        "citation": "[Password reset and account recovery \u00a7password-reset-and-account-recovery_s2]",
+        "chunk_id": "password-reset-and-account-recovery_s2",
+        "citation_valid": true,
+        "chunk_found_in_retrieval": true,
+        "keyword_overlap_count": 8,
+        "supported": true
+      }
+    ]
+  },
+  {
+    "query_id": "Q4",
+    "answer_label": "grounded_answer",
+    "overall_grounded": true,
+    "citation_checks": [
+      {
+        "citation": "[Document verification requirements \u00a7document-verification-requirements_s2]",
+        "chunk_id": "document-verification-requirements_s2",
+        "citation_valid": true,
+        "chunk_found_in_retrieval": true,
+        "keyword_overlap_count": 3,
+        "supported": true
+      }
+    ]
+  },
+  {
+    "query_id": "Q5",
+    "answer_label": "grounded_answer",
+    "overall_grounded": true,
+    "citation_checks": [
+      {
+        "citation": "[Demo account behaviour \u00a7demo-account-behaviour_s2]",
+        "chunk_id": "demo-account-behaviour_s2",
+        "citation_valid": true,
+        "chunk_found_in_retrieval": true,
+        "keyword_overlap_count": 3,
+        "supported": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "strategy_a": {
+    "name": "sentence",
+    "chunk_count": 19,
+    "aggregate": {
+      "top3_hit_rate": 1.0,
+      "total_queries": 5,
+      "hits": 5,
+      "partial_hits": 0,
+      "misses": 0
+    }
+  },
+  "strategy_b": {
+    "name": "fixed",
+    "chunk_count": 10,
+    "aggregate": {
+      "top3_hit_rate": 1.0,
+      "total_queries": 5,
+      "hits": 5,
+      "partial_hits": 0,
+      "misses": 0
+    }
+  },
+  "tradeoff_analysis": {
+    "winner": "tie",
+    "hit_rate_diff": 0.0,
+    "explanation": "Sentence chunking created 19 chunks and fixed-size chunking created 10 chunks. The top-3 hit rates were 1.0 for sentence and 1.0 for fixed, so the comparison result is tie."
+  }
+}

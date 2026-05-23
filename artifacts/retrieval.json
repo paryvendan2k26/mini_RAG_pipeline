@@ -1,0 +1,137 @@
+[
+  {
+    "query_id": "Q1",
+    "question": "I requested a bank withdrawal yesterday. How long can it take after approval?",
+    "top_k": [
+      {
+        "rank": 1,
+        "chunk_id": "cash-withdrawal-processing_s1",
+        "doc_title": "Cash withdrawal processing",
+        "score": 0.5108,
+        "chunk_text": "Bank withdrawals may take 1 to 3 business days after approval"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "document-verification-requirements_s3",
+        "doc_title": "Document verification requirements",
+        "score": 0.2508,
+        "chunk_text": "Bank statements older than 3 months are not accepted"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "cash-withdrawal-processing_s2",
+        "doc_title": "Cash withdrawal processing",
+        "score": 0.2181,
+        "chunk_text": "E-wallet withdrawals are typically processed within 4 hours after approval"
+      }
+    ]
+  },
+  {
+    "query_id": "Q2",
+    "question": "My reset link is not working after an hour. Is that expected?",
+    "top_k": [
+      {
+        "rank": 1,
+        "chunk_id": "password-reset-and-account-recovery_s1",
+        "doc_title": "Password reset and account recovery",
+        "score": 0.3674,
+        "chunk_text": "Reset links expire after 30 minutes"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "password-reset-and-account-recovery_s0",
+        "doc_title": "Password reset and account recovery",
+        "score": 0.3021,
+        "chunk_text": "If a user forgets their password, they can request a reset email from the login page"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "password-reset-and-account-recovery_s4",
+        "doc_title": "Password reset and account recovery",
+        "score": 0.2909,
+        "chunk_text": "If backup codes are unavailable, the user must complete identity verification before 2FA can be reset"
+      }
+    ]
+  },
+  {
+    "query_id": "Q3",
+    "question": "Can support tell me what my password currently is?",
+    "top_k": [
+      {
+        "rank": 1,
+        "chunk_id": "password-reset-and-account-recovery_s0",
+        "doc_title": "Password reset and account recovery",
+        "score": 0.2704,
+        "chunk_text": "If a user forgets their password, they can request a reset email from the login page"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "password-reset-and-account-recovery_s2",
+        "doc_title": "Password reset and account recovery",
+        "score": 0.2591,
+        "chunk_text": "For security reasons, support agents cannot see or manually reveal user passwords"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "demo-account-behaviour_s3",
+        "doc_title": "Demo account behaviour",
+        "score": 0.0,
+        "chunk_text": "Users should switch to a real account to trade with real funds"
+      }
+    ]
+  },
+  {
+    "query_id": "Q4",
+    "question": "Will a utility bill from 8 months ago work for proof of address?",
+    "top_k": [
+      {
+        "rank": 1,
+        "chunk_id": "document-verification-requirements_s1",
+        "doc_title": "Document verification requirements",
+        "score": 0.521,
+        "chunk_text": "Proof of address documents must show the user's full name, address, and issue date"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "document-verification-requirements_s2",
+        "doc_title": "Document verification requirements",
+        "score": 0.4532,
+        "chunk_text": "Utility bills older than 6 months are not accepted"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "document-verification-requirements_s3",
+        "doc_title": "Document verification requirements",
+        "score": 0.2026,
+        "chunk_text": "Bank statements older than 3 months are not accepted"
+      }
+    ]
+  },
+  {
+    "query_id": "Q5",
+    "question": "Can I withdraw profit made on a demo account?",
+    "top_k": [
+      {
+        "rank": 1,
+        "chunk_id": "demo-account-behaviour_s2",
+        "doc_title": "Demo account behaviour",
+        "score": 0.6673,
+        "chunk_text": "Demo profit cannot be withdrawn"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "demo-account-behaviour_s3",
+        "doc_title": "Demo account behaviour",
+        "score": 0.1777,
+        "chunk_text": "Users should switch to a real account to trade with real funds"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "demo-account-behaviour_s0",
+        "doc_title": "Demo account behaviour",
+        "score": 0.1583,
+        "chunk_text": "Demo accounts use virtual funds and do not reflect real-market execution exactly"
+      }
+    ]
+  }
+]
