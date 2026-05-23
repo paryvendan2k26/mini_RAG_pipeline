@@ -2,7 +2,7 @@
   {
     "query_id": "Q1",
     "answer_label": "grounded_answer",
-    "answer": "It may take 1 to 3 business days after approval for the bank withdrawal. [Cash withdrawal processing \u00a7cash-withdrawal-processing_s1]",
+    "answer": "It may take 1 to 3 business days after approval. [Cash withdrawal processing \u00a7cash-withdrawal-processing_s1]",
     "citations": [
       "[Cash withdrawal processing \u00a7cash-withdrawal-processing_s1]"
     ],
@@ -13,7 +13,7 @@
   {
     "query_id": "Q2",
     "answer_label": "grounded_answer",
-    "answer": "Reset links expire after 30 minutes, so unfortunately, it's expected that your link would no longer work after an hour. [Password reset and account recovery \u00a7password-reset-and-account-recovery_s1]",
+    "answer": "No, that is not expected as reset links expire after 30 minutes [Password reset and account recovery \u00a7password-reset-and-account-recovery_s1].",
     "citations": [
       "[Password reset and account recovery \u00a7password-reset-and-account-recovery_s1]"
     ],
@@ -35,7 +35,7 @@
   {
     "query_id": "Q4",
     "answer_label": "grounded_answer",
-    "answer": "No, a utility bill from 8 months ago will not work for proof of address. [Document verification requirements \u00a7document-verification-requirements_s2]",
+    "answer": "No, a utility bill from 8 months ago will not be accepted as it is older than 6 months. [Document verification requirements \u00a7document-verification-requirements_s2]",
     "citations": [
       "[Document verification requirements \u00a7document-verification-requirements_s2]"
     ],

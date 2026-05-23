@@ -9,7 +9,7 @@
         "chunk_id": "cash-withdrawal-processing_s1",
         "citation_valid": true,
         "chunk_found_in_retrieval": true,
-        "keyword_overlap_count": 7,
+        "keyword_overlap_count": 6,
         "supported": true
       }
     ]
@@ -54,7 +54,7 @@
         "chunk_id": "document-verification-requirements_s2",
         "citation_valid": true,
         "chunk_found_in_retrieval": true,
-        "keyword_overlap_count": 3,
+        "keyword_overlap_count": 6,
         "supported": true
       }
     ]
